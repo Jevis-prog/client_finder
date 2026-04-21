@@ -1,23 +1,28 @@
-import hashlib
+from secrets import compare_digest
 
-from fastapi import APIRouter, Cookie, Depends, HTTPException, Response, status
+from fastapi import APIRouter, Cookie, Depends, Header, HTTPException, Response, status
 
-from api.v1.schemas import CurrentUserOut, RegisterRequest, UserLogin
-from config import FASTAPI_COOKIE_SECURE, TOKEN_LENGTH
-from services.auth import authenticate_user, create_token_for_user, delete_token, get_user_by_token
+from api.v1.schemas import CurrentUserOut, UserLogin
+from config import ADMIN_BOOTSTRAP_TOKEN, FASTAPI_COOKIE_SECURE, SESSION_COOKIE_NAME, TOKEN_EXPIRE_MINUTES, TOKEN_LENGTH
+from services.auth import authenticate_user, create_token_for_user, delete_token, get_user_by_token, hash_password
 from bot.uow.sql import SQLUoW
 
 
 router = APIRouter()
 
 
-def _hash_password(password: str) -> str:
-    return hashlib.sha256(password.encode('utf-8')).hexdigest()
-
-
 @router.post('/auth/register', status_code=201)
-async def register(payload: RegisterRequest) -> None:
-    password_hash = _hash_password(payload.password)
+async def register(
+    payload: UserLogin,
+    x_bootstrap_token: str | None = Header(default=None),
+) -> None:
+    if not ADMIN_BOOTSTRAP_TOKEN:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail='Регистрация отключена')
+
+    if not x_bootstrap_token or not compare_digest(x_bootstrap_token, ADMIN_BOOTSTRAP_TOKEN):
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail='Регистрация запрещена')
+
+    password_hash = hash_password(payload.password)
     async with SQLUoW() as uow:
         existing = await uow.admin_user_repo.get(username=payload.username)
         if existing is not None:
@@ -32,7 +37,7 @@ async def register(payload: RegisterRequest) -> None:
 async def login(data: UserLogin, response: Response) -> None:
     user = await authenticate_user(
         username=data.username,
-        password_hash=data.password_hash,
+        password=data.password,
     )
     if not user:
         raise HTTPException(status_code=401, detail='Неверные учетные данные')
@@ -42,23 +47,28 @@ async def login(data: UserLogin, response: Response) -> None:
         raise HTTPException(status_code=401, detail='Неверные учетные данные')
 
     response.set_cookie(
-        key='access_token',
+        key=SESSION_COOKIE_NAME,
         value=token_value,
-        httponly=False,
+        httponly=True,
         secure=FASTAPI_COOKIE_SECURE,
-        samesite='lax',
-        max_age=3600,
+        samesite='strict',
+        max_age=TOKEN_EXPIRE_MINUTES * 60,
     )
 
 
 @router.post('/logout')
-async def logout(response: Response, access_token: str | None = Cookie(None)) -> None:
-    response.delete_cookie(key='access_token')
+async def logout(response: Response, access_token: str | None = Cookie(None, alias=SESSION_COOKIE_NAME)) -> None:
+    response.delete_cookie(
+        key=SESSION_COOKIE_NAME,
+        secure=FASTAPI_COOKIE_SECURE,
+        httponly=True,
+        samesite='strict',
+    )
     if access_token:
         await delete_token(access_token)
 
 
-async def get_current_user(access_token: str | None = Cookie(None)):
+async def get_current_user(access_token: str | None = Cookie(None, alias=SESSION_COOKIE_NAME)):
     if not access_token:
         raise HTTPException(status_code=401, detail='Не авторизован')
     user = await get_user_by_token(access_token)

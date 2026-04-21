@@ -23,11 +23,11 @@ const router = createRouter({
   ],
 })
 
-router.beforeEach((to, _from, next) => {
+router.beforeEach(async (to, _from, next) => {
   const authStore = useAuthStore()
 
   if (!authStore.isInitialized) {
-    authStore.checkAuth()
+    await authStore.checkAuth()
   }
 
   if (to.matched.some((record) => record.meta.requiresAuth)) {
