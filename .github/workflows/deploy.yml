@@ -36,6 +36,19 @@ jobs:
             --exclude 'logs/' \
             ./ "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/opt/client_finder/"
 
+      - name: Write Env File
+        shell: bash
+        run: |
+          rsync -az ./deploy/dev.env "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/opt/client_finder/.env"
+          ssh -p "${{ secrets.SSH_PORT }}" "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" "cat >> /opt/client_finder/.env <<'EOF'
+          POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
+          PG_PASSWORD=${{ secrets.PG_PASSWORD }}
+          API_ID=${{ secrets.API_ID }}
+          API_HASH=${{ secrets.API_HASH }}
+          DEEPSEEK_API_KEY=${{ secrets.DEEPSEEK_API_KEY }}
+          OPEN_ROUTER_API_KEY=${{ secrets.OPEN_ROUTER_API_KEY }}
+          EOF"
+
       - name: Deploy Containers
         shell: bash
         run: |
