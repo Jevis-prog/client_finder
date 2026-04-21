@@ -12,7 +12,7 @@ app.add_middleware(
     allow_origins=FASTAPI_ALLOW_ORIGINS,
     allow_credentials=True,
     allow_methods=['GET', 'POST', 'OPTIONS'],
-    allow_headers=['Content-Type', 'X-Bootstrap-Token'],
+    allow_headers=['Content-Type'],
 )
 
 app.include_router(api_router, prefix='/api/v1', tags=['v1'])

@@ -1,36 +1,11 @@
-from secrets import compare_digest
-
-from fastapi import APIRouter, Cookie, Depends, Header, HTTPException, Response, status
+from fastapi import APIRouter, Cookie, Depends, HTTPException, Response
 
 from api.v1.schemas import CurrentUserOut, UserLogin
-from config import ADMIN_BOOTSTRAP_TOKEN, FASTAPI_COOKIE_SECURE, SESSION_COOKIE_NAME, TOKEN_EXPIRE_MINUTES, TOKEN_LENGTH
-from services.auth import authenticate_user, create_token_for_user, delete_token, get_user_by_token, hash_password
-from bot.uow.sql import SQLUoW
+from config import FASTAPI_COOKIE_SECURE, SESSION_COOKIE_NAME, TOKEN_EXPIRE_MINUTES, TOKEN_LENGTH
+from services.auth import authenticate_user, create_token_for_user, delete_token, get_user_by_token
 
 
 router = APIRouter()
-
-
-@router.post('/auth/register', status_code=201)
-async def register(
-    payload: UserLogin,
-    x_bootstrap_token: str | None = Header(default=None),
-) -> None:
-    if not ADMIN_BOOTSTRAP_TOKEN:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail='Регистрация отключена')
-
-    if not x_bootstrap_token or not compare_digest(x_bootstrap_token, ADMIN_BOOTSTRAP_TOKEN):
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail='Регистрация запрещена')
-
-    password_hash = hash_password(payload.password)
-    async with SQLUoW() as uow:
-        existing = await uow.admin_user_repo.get(username=payload.username)
-        if existing is not None:
-            raise HTTPException(
-                status_code=status.HTTP_409_CONFLICT,
-                detail='Пользователь уже существует',
-            )
-        await uow.admin_user_repo.get_or_create(payload.username, password_hash)
 
 
 @router.post('/login')
