@@ -15,7 +15,11 @@ export type Lead = {
 }
 
 export default {
-  list() {
-    return api.get<Lead[]>('/leads')
+  list(onlyValid = false) {
+    return api.get<Lead[]>('/leads', {
+      params: {
+        only_valid: onlyValid,
+      },
+    })
   },
 }

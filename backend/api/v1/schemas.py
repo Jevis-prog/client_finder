@@ -28,3 +28,14 @@ class LeadOut(BaseModel):
     processing_status: str
     username: str | None = None
     chat_title: str | None = None
+
+
+class StatsOut(BaseModel):
+    """Сводная статистика для админки."""
+
+    total_messages: int
+    processed_messages: int
+    total_leads: int
+    valid_leads: int
+    processed_last_day: int
+    processed_last_hour: int
