@@ -4,15 +4,6 @@
       <section class="auth-panel">
         <div class="auth-badge">
           <div class="brand-mark">CF</div>
-          <div>
-            <div class="text-subtitle1">Client Finder Admin</div>
-            <div class="text-muted">Веб, Telegram-боты и автоматизация</div>
-          </div>
-        </div>
-
-        <div class="auth-title">
-          <h1>Вход в админку</h1>
-          <p class="text-muted">Управление лидами, сообщениями и ручной модерацией.</p>
         </div>
 
         <div class="form-stack">
@@ -113,62 +104,65 @@ const handleLogin = async () => {
 }
 
 .auth-shell {
-  width: min(520px, 100%);
+  width: min(560px, 100%);
   display: grid;
 }
 
 .brand-mark {
-  width: 48px;
-  height: 48px;
-  border-radius: 16px;
+  width: 56px;
+  height: 56px;
+  border-radius: 20px;
   display: grid;
   place-items: center;
-  background: var(--accent);
+  background: linear-gradient(140deg, var(--accent) 0%, #5a2d1a 100%);
   color: #fff;
   font-weight: 700;
+  box-shadow: 0 18px 34px rgba(90, 45, 26, 0.28);
 }
 
 .auth-panel {
-  background: var(--surface);
-  border-radius: 24px;
-  padding: 28px;
-  box-shadow: 0 18px 36px rgba(20, 20, 30, 0.08);
-  min-height: 420px;
+  background:
+    linear-gradient(180deg, rgba(255, 252, 248, 0.96) 0%, rgba(250, 241, 230, 0.92) 100%);
+  border: 1px solid rgba(82, 56, 38, 0.08);
+  border-radius: 32px;
+  padding: 34px;
+  box-shadow: 0 28px 60px rgba(62, 38, 20, 0.12);
+  min-height: 380px;
   display: grid;
   align-content: start;
-  gap: 18px;
+  gap: 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+.auth-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto auto 0;
+  width: 100%;
+  height: 8px;
+  background: linear-gradient(90deg, var(--accent) 0%, #d9a066 55%, #6c8c7f 100%);
 }
 
 .auth-badge {
   display: flex;
   gap: 12px;
   align-items: center;
-  padding: 12px 16px;
-  border-radius: 16px;
-  background: var(--surface-soft);
-}
-
-.auth-title {
-  text-align: center;
-}
-
-.auth-title h1 {
-  margin: 0 0 8px;
-  font-size: 32px;
-}
-
-.auth-title p {
-  margin: 0;
+  justify-content: center;
+  padding: 18px;
+  border-radius: 22px;
+  background: rgba(239, 229, 215, 0.7);
+  border: 1px solid rgba(82, 56, 38, 0.06);
 }
 
 .form-stack {
   display: grid;
-  gap: 14px;
+  gap: 16px;
 }
 
 .button-stack {
   display: grid;
   gap: 10px;
-  margin-top: 6px;
+  margin-top: 10px;
 }
 </style>

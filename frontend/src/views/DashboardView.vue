@@ -5,13 +5,16 @@
         <div class="brand-mark">CF</div>
         <div>
           <strong>Client Finder Admin</strong>
-          <div class="text-muted">Заготовка админки</div>
+          <div class="text-muted">Лиды и результаты анализа</div>
         </div>
       </div>
 
-      <button class="q-btn bg-grey-2 text-dark" @click="handleLogout">
-        Выйти
-      </button>
+      <div class="topbar-actions">
+        <router-link class="nav-link" to="/stats">Статистика</router-link>
+        <button class="q-btn bg-grey-2 text-dark" @click="handleLogout">
+          Выйти
+        </button>
+      </div>
     </section>
 
     <section class="panel">
@@ -23,9 +26,16 @@
           </p>
         </div>
 
-        <button class="q-btn bg-grey-2 text-dark" :disabled="loading" @click="loadLeads">
-          {{ loading ? 'Обновляем...' : 'Обновить' }}
-        </button>
+        <div class="panel-actions">
+          <label class="filter-toggle">
+            <input v-model="onlyValid" type="checkbox" />
+            <span>Только валидные</span>
+          </label>
+
+          <button class="q-btn bg-grey-2 text-dark" :disabled="loading" @click="loadLeads">
+            {{ loading ? 'Обновляем...' : 'Обновить' }}
+          </button>
+        </div>
       </div>
 
       <div v-if="error" class="text-negative">{{ error }}</div>
@@ -64,12 +74,13 @@ const authStore = useAuthStore()
 const leads = ref<Lead[]>([])
 const loading = ref(false)
 const error = ref('')
+const onlyValid = ref(false)
 
 const loadLeads = async () => {
   try {
     loading.value = true
     error.value = ''
-    const { data } = await leadsApi.list()
+    const { data } = await leadsApi.list(onlyValid.value)
     leads.value = data
   } catch (err: any) {
     error.value = err.response?.data?.detail || 'Не удалось загрузить лиды.'
@@ -91,7 +102,7 @@ onMounted(() => {
 <style scoped>
 .dashboard-page {
   display: grid;
-  gap: 24px;
+  gap: 26px;
   padding: 28px clamp(20px, 4vw, 48px);
 }
 
@@ -104,10 +115,11 @@ onMounted(() => {
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding: 18px 22px;
-  border-radius: 18px;
-  background: var(--surface);
-  box-shadow: 0 18px 36px rgba(20, 20, 30, 0.06);
+  padding: 20px 24px;
+  border-radius: 26px;
+  background: linear-gradient(135deg, rgba(34, 29, 26, 0.94) 0%, rgba(64, 45, 31, 0.92) 100%);
+  box-shadow: 0 24px 48px rgba(53, 31, 17, 0.18);
+  color: #fff5eb;
 }
 
 .brand {
@@ -117,21 +129,22 @@ onMounted(() => {
 }
 
 .brand-mark {
-  width: 44px;
-  height: 44px;
-  border-radius: 14px;
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
   display: grid;
   place-items: center;
-  background: var(--accent-soft);
-  color: var(--accent);
+  background: linear-gradient(135deg, #f2c28c 0%, #d57a48 100%);
+  color: #442010;
   font-weight: 700;
 }
 
 .panel {
-  background: var(--surface);
-  border-radius: 20px;
-  padding: 24px;
-  box-shadow: 0 16px 32px rgba(20, 20, 30, 0.06);
+  background: linear-gradient(180deg, rgba(255, 251, 246, 0.92) 0%, rgba(248, 239, 228, 0.88) 100%);
+  border: 1px solid rgba(82, 56, 38, 0.08);
+  border-radius: 28px;
+  padding: 28px;
+  box-shadow: 0 20px 40px rgba(62, 38, 20, 0.1);
 }
 
 .panel-head {
@@ -140,6 +153,43 @@ onMounted(() => {
   gap: 16px;
   align-items: flex-start;
   margin-bottom: 16px;
+}
+
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.nav-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 0 16px;
+  border-radius: 14px;
+  background: rgba(255, 244, 232, 0.12);
+  color: #fff5eb;
+  text-decoration: none;
+  border: 1px solid rgba(255, 229, 201, 0.12);
+}
+
+.panel-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.filter-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 14px;
+  border-radius: 14px;
+  background: rgba(239, 229, 215, 0.8);
+  color: #5b4d42;
+  font-size: 14px;
+  border: 1px solid rgba(82, 56, 38, 0.06);
 }
 
 .panel h1 {
@@ -151,10 +201,10 @@ onMounted(() => {
 }
 
 .empty-state {
-  padding: 18px;
-  border-radius: 16px;
-  border: 1px dashed var(--border-soft);
-  background: var(--surface-soft);
+  padding: 22px;
+  border-radius: 20px;
+  border: 1px dashed rgba(82, 56, 38, 0.16);
+  background: rgba(239, 229, 215, 0.66);
 }
 
 .lead-list {
@@ -163,12 +213,14 @@ onMounted(() => {
 }
 
 .lead-card {
-  border: 1px solid var(--border-soft);
-  border-radius: 16px;
-  padding: 16px;
+  border: 1px solid rgba(82, 56, 38, 0.08);
+  border-radius: 22px;
+  padding: 18px;
   display: grid;
-  gap: 10px;
-  background: var(--surface-soft);
+  gap: 12px;
+  background:
+    linear-gradient(180deg, rgba(255, 251, 246, 0.96) 0%, rgba(243, 233, 220, 0.9) 100%);
+  box-shadow: 0 14px 26px rgba(62, 38, 20, 0.06);
 }
 
 .lead-meta {
@@ -191,11 +243,11 @@ onMounted(() => {
 }
 
 .status-pill {
-  padding: 6px 12px;
+  padding: 7px 12px;
   border-radius: 999px;
   font-size: 12px;
   font-weight: 600;
-  background: var(--accent-soft);
-  color: var(--accent);
+  background: rgba(201, 111, 59, 0.14);
+  color: var(--accent-strong);
 }
 </style>

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 
 from api.v1.routes.auth import get_current_user
 from api.v1.schemas import LeadOut
@@ -9,9 +9,12 @@ router = APIRouter()
 
 
 @router.get('/leads', response_model=list[LeadOut])
-async def list_leads(user=Depends(get_current_user)) -> list[LeadOut]:
+async def list_leads(
+    only_valid: bool = Query(default=False),
+    user=Depends(get_current_user),
+) -> list[LeadOut]:
     async with SQLUoW() as uow:
-        leads = await uow.leads_repo.list_leads()
+        leads = await uow.leads_repo.list_leads(only_valid=only_valid)
 
     return [
         LeadOut(

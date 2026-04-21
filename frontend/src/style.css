@@ -1,25 +1,28 @@
 :root {
   font-family: Manrope, "Segoe UI", sans-serif;
-  color: #1c1c1c;
-  background-color: #f4f5f7;
+  color: #18161a;
+  background-color: #f5efe6;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
-  --surface: #ffffff;
-  --surface-soft: #f6f7fb;
-  --border-soft: rgba(12, 19, 41, 0.08);
-  --text-muted: #667085;
-  --accent: #2f6fed;
-  --accent-soft: rgba(47, 111, 237, 0.14);
-  --success: #2f855a;
-  --success-soft: rgba(47, 133, 90, 0.14);
-  --warning: #b7791f;
-  --warning-soft: rgba(183, 121, 31, 0.14);
-  --danger: #c53030;
-  --danger-soft: rgba(197, 48, 48, 0.14);
+  --surface: rgba(255, 250, 244, 0.84);
+  --surface-soft: #efe5d7;
+  --surface-strong: #221d1a;
+  --border-soft: rgba(52, 36, 24, 0.1);
+  --text-muted: #75695e;
+  --text-color: #18161a;
+  --accent: #c96f3b;
+  --accent-soft: rgba(201, 111, 59, 0.18);
+  --accent-strong: #8f3f20;
+  --success: #396a52;
+  --success-soft: rgba(57, 106, 82, 0.16);
+  --warning: #9a6a1f;
+  --warning-soft: rgba(154, 106, 31, 0.16);
+  --danger: #ad3f35;
+  --danger-soft: rgba(173, 63, 53, 0.16);
   --primary: var(--accent);
-  --secondary: #26a69a;
-  --grey-2: #f0f2f5;
-  --dark: #1f2937;
+  --secondary: #3f6a75;
+  --grey-2: #efe5d7;
+  --dark: #18161a;
 }
 
 * {
@@ -30,9 +33,11 @@ body {
   margin: 0;
   min-height: 100vh;
   background:
-    radial-gradient(circle at 12% 20%, rgba(255, 205, 140, 0.25), transparent 45%),
-    radial-gradient(circle at 80% 10%, rgba(120, 150, 255, 0.2), transparent 50%),
-    #f4f5f7;
+    radial-gradient(circle at 10% 10%, rgba(232, 157, 106, 0.24), transparent 34%),
+    radial-gradient(circle at 84% 16%, rgba(104, 140, 127, 0.22), transparent 30%),
+    radial-gradient(circle at 50% 100%, rgba(143, 63, 32, 0.12), transparent 28%),
+    linear-gradient(180deg, #f8f1e7 0%, #efe5d7 100%);
+  color: var(--text-color);
 }
 
 a {
@@ -51,15 +56,15 @@ input {
 
 .q-field {
   border: 1px solid var(--border-soft);
-  border-radius: 14px;
-  background: var(--surface);
-  padding: 6px 12px;
+  border-radius: 18px;
+  background: rgba(255, 250, 244, 0.92);
+  padding: 8px 14px;
   transition: box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
 .q-field:focus-within {
-  border-color: rgba(47, 111, 237, 0.45);
-  box-shadow: 0 0 0 3px rgba(47, 111, 237, 0.15);
+  border-color: rgba(201, 111, 59, 0.42);
+  box-shadow: 0 0 0 4px rgba(201, 111, 59, 0.14);
 }
 
 .q-field__inner {
@@ -71,16 +76,17 @@ input {
   width: 100%;
   border: none;
   outline: none;
-  font-size: 14px;
+  font-size: 15px;
   background: transparent;
   color: inherit;
 }
 
 .q-btn {
   border: none;
-  border-radius: 12px;
-  padding: 10px 18px;
-  font-weight: 600;
+  border-radius: 16px;
+  padding: 11px 18px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
   cursor: pointer;
   transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
   display: inline-flex;
@@ -97,16 +103,16 @@ input {
 }
 
 .q-btn:not(:disabled):hover {
-  transform: translateY(-1px);
-  box-shadow: 0 10px 20px rgba(20, 20, 30, 0.08);
+  transform: translateY(-2px);
+  box-shadow: 0 14px 28px rgba(62, 38, 20, 0.12);
 }
 
 .bg-primary {
-  background: var(--primary);
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-strong) 100%);
 }
 
 .bg-grey-2 {
-  background: var(--grey-2);
+  background: rgba(239, 229, 215, 0.9);
 }
 
 .text-white {
@@ -123,4 +129,8 @@ input {
 
 .full-width {
   width: 100%;
+}
+
+::selection {
+  background: rgba(201, 111, 59, 0.22);
 }
