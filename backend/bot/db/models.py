@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from sqlalchemy import BigInteger, Boolean, Enum, ForeignKey, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -49,3 +51,29 @@ class ChatsModel(Base):
     messages: Mapped[list['MessageModel']] = relationship(
         back_populates='chat', cascade='all, delete-orphan',
     )
+
+
+class AdminUserModel(Base):
+    """Пользователи админки."""
+
+    __tablename__ = 'admin_users'
+
+    username: Mapped[str] = mapped_column(String, nullable=False, unique=True)
+    password_hash: Mapped[str] = mapped_column(String, nullable=False)
+
+    tokens: Mapped[list['AuthTokenModel']] = relationship(
+        back_populates='user', cascade='all, delete-orphan',
+    )
+
+
+class AuthTokenModel(Base):
+    """Токены авторизации админки."""
+
+    __tablename__ = 'auth_tokens'
+
+    user_id: Mapped[int] = mapped_column(ForeignKey('admin_users.id'), nullable=False)
+    token: Mapped[str] = mapped_column(String, nullable=False, unique=True)
+    created_at: Mapped[datetime] = mapped_column(nullable=False, default=datetime.now)
+    expires_at: Mapped[datetime] = mapped_column(nullable=False)
+
+    user: Mapped['AdminUserModel'] = relationship(back_populates='tokens')

@@ -26,6 +26,14 @@ def env_list(param_name: str, default: str = '', separator: str = ',') -> list[i
     return result
 
 
+def env_str_list(param_name: str, default: list[str] | None = None, separator: str = ',') -> list[str]:
+    """Функция, преобразующая переменную окружения в список строк."""
+    value = getenv(param_name)
+    if value is None:
+        return default or []
+    return [x.strip() for x in value.strip().split(separator) if x.strip()]
+
+
 DB_TYPE = 'postgresql'
 DB_DRIVER = 'asyncpg'
 DB_USER = getenv('POSTGRES_USER', 'postgres')
@@ -52,3 +60,8 @@ DEEPSEEK_API_URL = getenv('DEEPSEEK_API_URL')
 OPEN_ROUTER_API_KEY = getenv('OPEN_ROUTER_API_KEY')
 OPEN_ROUTER_API_URL = getenv('OPEN_ROUTER_API_URL')
 DEEPSEEK_MODEL = getenv('DEEPSEEK_MODEL')
+
+FASTAPI_ALLOW_ORIGINS = env_str_list('FASTAPI_ALLOW_ORIGINS', ['*'])
+FASTAPI_COOKIE_SECURE = getenv('COOKIE_SECURE_ENABLED', 'False').lower() == 'true'
+TOKEN_EXPIRE_MINUTES = env_int('TOKEN_EXPIRE_MINUTES', 60) or 60
+TOKEN_LENGTH = env_int('TOKEN_LENGTH', 48) or 48
