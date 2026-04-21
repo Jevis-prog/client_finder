@@ -1,0 +1,11 @@
+sqlalchemy
+alembic
+telethon
+cryptg
+asyncpg
+openai
+load_dotenv
+click
+apscheduler
+pydantic
+cryptography

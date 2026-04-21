@@ -1,0 +1,13 @@
+# Codestyle
+flake8
+flake8-bugbear
+flake8-commas
+flake8-docstrings
+flake8-isort
+flake8-literal
+flake8-print
+mccabe
+pep8-naming
+mypy
+pytest
+pytest-asyncio
