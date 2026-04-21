@@ -1,18 +1,11 @@
 from pydantic import BaseModel, Field
 
 
-class RegisterRequest(BaseModel):
-    """Запрос на регистрацию пользователя админки."""
-
-    username: str = Field(min_length=1)
-    password: str = Field(min_length=1)
-
-
 class UserLogin(BaseModel):
     """Модель аутентификации."""
 
-    username: str
-    password_hash: str
+    username: str = Field(min_length=1)
+    password: str = Field(min_length=1)
 
 
 class CurrentUserOut(BaseModel):

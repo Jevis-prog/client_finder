@@ -2,8 +2,6 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
 import authApi from '../api/auth'
-import { getCookie } from '../utils/cookies'
-import { hashPassword } from '../utils/crypto'
 
 
 export const useAuthStore = defineStore('auth', () => {
@@ -12,16 +10,15 @@ export const useAuthStore = defineStore('auth', () => {
 
   async function login(credentials: { username: string; password: string }) {
     try {
-      const passwordHash = await hashPassword(credentials.password)
       await authApi.login({
         username: credentials.username,
-        password_hash: passwordHash,
+        password: credentials.password,
       })
-      isAuthenticated.value = Boolean(getCookie('access_token'))
-      isInitialized.value = true
+      await checkAuth()
       return true
     } catch (error) {
       isAuthenticated.value = false
+      isInitialized.value = true
       throw error
     }
   }
@@ -34,9 +31,13 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  function checkAuth() {
-    const token = getCookie('access_token')
-    isAuthenticated.value = Boolean(token)
+  async function checkAuth() {
+    try {
+      await authApi.me()
+      isAuthenticated.value = true
+    } catch {
+      isAuthenticated.value = false
+    }
     isInitialized.value = true
     return isAuthenticated.value
   }
