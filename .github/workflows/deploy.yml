@@ -3,7 +3,7 @@ name: Deploy
 on:
   push:
     branches:
-      - main
+      - deploy
 
 jobs:
   deploy:
@@ -31,6 +31,8 @@ jobs:
             --exclude '__pycache__/' \
             --exclude '.pytest_cache/' \
             --exclude '.mypy_cache/' \
+            --exclude 'frontend/node_modules/' \
+            --exclude 'frontend/dist/' \
             --exclude '.env' \
             --exclude 'sessions/' \
             --exclude 'logs/' \
@@ -56,5 +58,5 @@ jobs:
             set -e
             mkdir -p /opt/client_finder/sessions /opt/client_finder/logs
             cd /opt/client_finder
-            docker compose up -d --build db migrate app
+            docker compose up -d --build db migrate api app frontend
           '

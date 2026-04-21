@@ -1,7 +1,10 @@
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from bot.db import async_session
+from bot.db.repository.admin_user import AdminUsersRepository
+from bot.db.repository.auth_token import AuthRepository
 from bot.db.repository.group import ChatsRepository
+from bot.db.repository.lead import LeadsRepository
 from bot.db.repository.message import MessagesHandler
 from bot.db.repository.user import UsersRepository
 from bot.uow.base import BaseUnitOfWork
@@ -22,6 +25,9 @@ class SQLUoW(BaseUnitOfWork):
         self.message_repo = MessagesHandler(self.session)
         self.user_repo = UsersRepository(self.session)
         self.chat_repo = ChatsRepository(self.session)
+        self.admin_user_repo = AdminUsersRepository(self.session)
+        self.auth_token_repo = AuthRepository(self.session)
+        self.leads_repo = LeadsRepository(self.session)
         await super().__aenter__()
         return self
 

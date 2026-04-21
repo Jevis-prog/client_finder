@@ -1,6 +1,6 @@
 services:
   app:
-    build: .
+    build: ./backend
     env_file:
       - .env
     volumes:
@@ -11,6 +11,25 @@ services:
     depends_on:
       migrate:
         condition: service_completed_successfully
+  api:
+    build: ./backend
+    env_file:
+      - .env
+    environment:
+      - PG_HOST=db
+      - PG_PORT=5432
+    command: uvicorn main:app --host 0.0.0.0 --port 8000
+    ports:
+      - "8000:8000"
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+  frontend:
+    build: ./frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - api
   db:
     image: postgres:14-alpine
     env_file:
@@ -23,7 +42,7 @@ services:
       timeout: 5s
       retries: 5
   migrate:
-    build: .
+    build: ./backend
     env_file:
       - .env
     environment:
@@ -34,4 +53,3 @@ services:
     depends_on:
       db:
         condition: service_healthy
-        
