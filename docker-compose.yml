@@ -3,6 +3,8 @@ services:
     build: .
     env_file:
       - .env
+    volumes:
+      - ./sessions:/app/sessions
     environment:
       - PG_HOST=db
       - PG_PORT=5432
